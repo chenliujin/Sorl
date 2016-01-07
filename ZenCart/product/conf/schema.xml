@@ -39,7 +39,7 @@
   - for best index size and searching performance, set "index" to false
     for all general text fields, use copyField to copy them to the
     catchall "text" field, and use that for searching.
-  - For maximum indexing performance, use the ConcurrentUpdateSolrServer
+  - For maximum indexing performance, use the StreamingUpdateSolrServer
     java client.
   - Remember to run the JVM in server mode, and use a higher logging level
     that avoids logging every request
@@ -63,7 +63,7 @@
             (int, float, boolean, string...)
      -->
 
-
+<fields>
    <!-- Valid attributes for fields:
      name: mandatory - the name for the field
      type: mandatory - the name of a field type from the 
@@ -93,8 +93,6 @@
        This will increase storage costs.
      termOffsets: Store offset information with the term vector. This 
        will increase storage costs.
-     termPayloads: Store payload information with the term vector. This
-       will increase storage costs.
      required: The field is required.  It will throw an error if the
        value does not exist
      default: a value that should be used if no value is specified
@@ -111,134 +109,162 @@
    <!-- If you remove this field, you must _also_ disable the update log in solrconfig.xml
       or Solr won't start. _version_ and update log are required for SolrCloud
    --> 
-   <field name="_version_" 	type="long" 	indexed="true" stored="true"/>
-   <field name="_root_" 	type="string" 	indexed="true" stored="false"/>
+   <field name="_version_" type="long" indexed="true" stored="true"/>
+   
+   <!-- points to the root document of a block of nested documents. Required for nested
+      document support, may be removed otherwise
+   -->
+   <field name="_root_" type="string" indexed="true" stored="false"/>
 
-   <field name="product_id" 					type="string" 					indexed="true" stored="true" required="true" multiValued="false" /> 
-   <field name="normal_white_black" 			type="int" 						indexed="true" stored="false" required="true" /> 
-   <field name="normal_countries" 				type="string" 					indexed="true" stored="true" required="false" multiValued="true"/> 
-   <field name="vip_white_black" 				type="int" 						indexed="true" stored="false" required="true" /> 
-   <field name="vip_countries" 					type="string" 					indexed="true" stored="true" required="false" multiValued="true"/> 
-   <field name="product_total_weight" 			type="double" 					indexed="true" stored="true" required="true" /> 
-   <field name="product_total_weight_global" 	type="double" 					indexed="true" stored="true" required="false" /> 
-   <field name="product_total_weight_na" 		type="double" 					indexed="true" stored="true" required="false" /> 
-   <field name="product_total_weight_sa" 		type="double" 					indexed="true" stored="true" required="false" /> 
-   <field name="product_total_weight_euw" 		type="double" 					indexed="true" stored="true" required="false" /> 
-   <field name="product_total_weight_eue" 		type="double" 					indexed="true" stored="true" required="false" /> 
-   <field name="product_total_weight_other" 	type="double" 					indexed="true" stored="true" required="false" /> 
-   <field name="recommend_weight" 				type="double" 					indexed="true" stored="true" required="true" /> 
-   <field name="new_weight" 					type="double" 					indexed="true" stored="true" required="true" /> 
-   <field name="special_weight" 				type="double" 					indexed="true" stored="true" required="true" /> 
-   <field name="featured_weight" 				type="double" 					indexed="true" stored="true" required="true" /> 
-   <field name="average_rating" 				type="double" 					indexed="true" stored="true" required="true" /> 
-   <field name="product_price" 					type="double" 					indexed="true" stored="true" required="true" /> 
-   <field name="special_start" 					type="tlong" 					indexed="true" stored="true" required="true" /> 
-   <field name="special_end" 					type="tlong" 					indexed="true" stored="true" required="true" /> 
-   <field name="is_recommend" 					type="int" 						indexed="true" stored="true" required="true" /> 
-   <field name="is_featured" 					type="int" 						indexed="true" stored="true" required="true" /> 
-   <field name="product_status" 				type="int" 						indexed="true" stored="true" required="true" /> 
-   <field name="big_customer_only" 				type="int" 						indexed="true" stored="true" required="true" /> 
-   <field name="product_quantity" 				type="int" 						indexed="true" stored="true" required="true" /> 
-   <field name="add_date" 						type="tlong" 					indexed="true" stored="true" required="true" /> 
-   <field name="master_category_id" 			type="string" 					indexed="true" stored="true" required="true" /> 
-   <field name="master_category_keywords" 		type="text_en_splitting" 		indexed="true" stored="true" required="false" />
-   <field name="pm_id" 							type="text_en_splitting_little" indexed="true" stored="true" required="true" /> 
-   <field name="manufacturer" 					type="text_en_splitting_little" indexed="true" stored="true" required="true" /> 
-   <field name="manufacturer_keywords" 			type="text_en_splitting_little" indexed="true" stored="true" required="true" />
-   <field name="master_category_name_path_en" 	type="text_en_splitting" 		indexed="true" stored="true" required="true" />
-   <field name="master_category_name_path_pt" 	type="text_en_splitting" 		indexed="true" stored="true" required="true" />
-   <field name="master_category_name_path_ru" 	type="text_en_splitting" 		indexed="true" stored="true" required="true" />
-   <field name="master_category_name_path_es" 	type="text_en_splitting" 		indexed="true" stored="true" required="true" />
-   <field name="master_category_name_path_de" 	type="text_en_splitting" 		indexed="true" stored="true" required="true" />
-   <field name="master_category_name_path_fr" 	type="text_en_splitting" 		indexed="true" stored="true" required="true" />
-   <field name="master_category_name_path_it" 	type="text_en_splitting" 		indexed="true" stored="true" required="true" />
-   <field name="master_category_name_path_ar" 	type="text_en_splitting" 		indexed="true" stored="true" required="true" />
-   <field name="master_category_name_path_nl" 	type="text_en_splitting" 		indexed="true" stored="true" required="true" />
-   <field name="product_model" 					type="text_en_splitting_tight" 	indexed="true" stored="true" required="true" omitNorms="false" /> 
-   <field name="short_title_en" 				type="text_en_splitting" 		indexed="true" stored="true" required="true" omitNorms="false" />
-   <field name="short_title_pt" 				type="text_en_splitting" 		indexed="true" stored="true" required="true" omitNorms="false" />
-   <field name="short_title_ru" 				type="text_en_splitting" 		indexed="true" stored="true" required="true" omitNorms="false" />
-   <field name="short_title_es" 				type="text_en_splitting" 		indexed="true" stored="true" required="true" omitNorms="false" />
-   <field name="short_title_de" 				type="text_en_splitting" 		indexed="true" stored="true" required="true" omitNorms="false" />
-   <field name="short_title_fr" 				type="text_en_splitting" 		indexed="true" stored="true" required="true" omitNorms="false" />
-   <field name="short_title_it" 				type="text_en_splitting" 		indexed="true" stored="true" required="true" omitNorms="false" />
-   <field name="short_title_ar" 				type="text_en_splitting" 		indexed="true" stored="true" required="true" omitNorms="false" />
-   <field name="short_title_nl" 				type="text_en_splitting" 		indexed="true" stored="true" required="true" omitNorms="false" />
-   <field name="category_path_name_en" 			type="text_en_splitting" 		indexed="true" stored="true" required="true" omitNorms="false" /> 
-   <field name="category_path_name_pt" 			type="text_en_splitting" 		indexed="true" stored="true" required="true" omitNorms="false" /> 
-   <field name="category_path_name_ru" 			type="text_en_splitting" 		indexed="true" stored="true" required="true" omitNorms="false" /> 
-   <field name="category_path_name_es" 			type="text_en_splitting" 		indexed="true" stored="true" required="true" omitNorms="false" /> 
-   <field name="category_path_name_de" 			type="text_en_splitting" 		indexed="true" stored="true" required="true" omitNorms="false" /> 
-   <field name="category_path_name_fr" 			type="text_en_splitting" 		indexed="true" stored="true" required="true" omitNorms="false" /> 
-   <field name="category_path_name_it" 			type="text_en_splitting" 		indexed="true" stored="true" required="true" omitNorms="false" /> 
-   <field name="category_path_name_ar" 			type="text_en_splitting" 		indexed="true" stored="true" required="true" omitNorms="false" /> 
-   <field name="category_path_name_nl" 			type="text_en_splitting" 		indexed="true" stored="true" required="true" omitNorms="false" /> 
-   <field name="product_title_en" 				type="text_en_splitting" 		indexed="true" stored="true" required="true" omitNorms="false" />
-   <field name="product_title_pt" 				type="text_en_splitting" 		indexed="true" stored="true" required="true" omitNorms="false" />
-   <field name="product_title_ru" 				type="text_en_splitting" 		indexed="true" stored="true" required="true" omitNorms="false" />
-   <field name="product_title_es" 				type="text_en_splitting" 		indexed="true" stored="true" required="true" omitNorms="false" />
-   <field name="product_title_de" 				type="text_en_splitting" 		indexed="true" stored="true" required="true" omitNorms="false" />
-   <field name="product_title_fr" 				type="text_en_splitting" 		indexed="true" stored="true" required="true" omitNorms="false" />
-   <field name="product_title_it" 				type="text_en_splitting" 		indexed="true" stored="true" required="true" omitNorms="false" />
-   <field name="product_title_ar" 				type="text_en_splitting" 		indexed="true" stored="true" required="true" omitNorms="false" />
-   <field name="product_title_nl" 				type="text_en_splitting" 		indexed="true" stored="true" required="true" omitNorms="false" />
-   <field name="tags" 							type="string" 					indexed="true" stored="true" required="false" multiValued="true" /> 
-   <field name="product_keywords_en" 			type="text_en_splitting" 		indexed="true" stored="true" required="true" omitNorms="false" />
-   <field name="product_keywords_pt" 			type="text_en_splitting" 		indexed="true" stored="true" required="true" omitNorms="false" />
-   <field name="product_keywords_ru" 			type="text_en_splitting" 		indexed="true" stored="true" required="true" omitNorms="false" />
-   <field name="product_keywords_es" 			type="text_en_splitting" 		indexed="true" stored="true" required="true" omitNorms="false" />
-   <field name="product_keywords_de" 			type="text_en_splitting" 		indexed="true" stored="true" required="true" omitNorms="false" />
-   <field name="product_keywords_fr" 			type="text_en_splitting" 		indexed="true" stored="true" required="true" omitNorms="false" />
-   <field name="product_keywords_it" 			type="text_en_splitting" 		indexed="true" stored="true" required="true" omitNorms="false" />
-   <field name="product_keywords_ar" 			type="text_en_splitting" 		indexed="true" stored="true" required="true" omitNorms="false" />
-   <field name="product_keywords_nl" 			type="text_en_splitting" 		indexed="true" stored="true" required="true" omitNorms="false" />
-   <field name="description_en" 				type="text_en" 					indexed="true" stored="false" required="true" omitNorms="false" />
-   <field name="description_pt" 				type="text_pt" 					indexed="true" stored="false" required="true" omitNorms="false" />
-   <field name="description_ru" 				type="text_ru" 					indexed="true" stored="false" required="true" omitNorms="false" />
-   <field name="description_es" 				type="text_es" 					indexed="true" stored="false" required="true" omitNorms="false" />
-   <field name="description_de" 				type="text_de" 					indexed="true" stored="false" required="true" omitNorms="false" />
-   <field name="description_fr" 				type="text_fr" 					indexed="true" stored="false" required="true" omitNorms="false" />
-   <field name="description_it" 				type="text_it" 					indexed="true" stored="false" required="true" omitNorms="false" />
-   <field name="description_ar" 				type="text_ar" 					indexed="true" stored="false" required="true" omitNorms="false" />
-   <field name="description_nl" 				type="text_nl" 					indexed="true" stored="false" required="true" omitNorms="false" />
-   <field name="category_path" 					type="string" 					indexed="true" stored="true" required="false" multiValued="true" /> 
-   <field name="text" 							type="text_general" 			indexed="true" stored="false" />
+   <!-- Only remove the "id" field if you have a very good reason to. While not strictly
+     required, it is highly recommended. A <uniqueKey> is present in almost all Solr 
+     installations. See the <uniqueKey> declaration below where <uniqueKey> is set to "id".
+   -->   
+   <field name="product_id" type="string" indexed="true" stored="true" required="true" /> 
 
-   <dynamicField name="*_i"  			type="int"    			indexed="true"  stored="true"/>
-   <dynamicField name="*_is" 			type="int"    			indexed="true"  stored="true"  	multiValued="true"/>
-   <dynamicField name="*_s"  			type="string" 			indexed="true"  stored="true" />
-   <dynamicField name="*_ss" 			type="string" 			indexed="true"  stored="true" 	multiValued="true"/>
-   <dynamicField name="*_l"  			type="long"   			indexed="true"  stored="true"/>
-   <dynamicField name="*_ls" 			type="long"   			indexed="true"  stored="true"  	multiValued="true"/>
-   <dynamicField name="*_t"  			type="text_general"    	indexed="true"  stored="true"/>
-   <dynamicField name="*_txt" 			type="text_general"   	indexed="true"  stored="true" 	multiValued="true"/>
-   <dynamicField name="*_en"  			type="text_en"    		indexed="true"  stored="true" 	multiValued="true"/>
-   <dynamicField name="*_b"  			type="boolean" 			indexed="true" 	stored="true"/>
-   <dynamicField name="*_bs" 			type="boolean" 			indexed="true" 	stored="true"  	multiValued="true"/>
-   <dynamicField name="*_f"  			type="float"  			indexed="true"  stored="true"/>
-   <dynamicField name="*_fs" 			type="float"  			indexed="true"  stored="true"  	multiValued="true"/>
-   <dynamicField name="*_d"  			type="double" 			indexed="true"  stored="true"/>
-   <dynamicField name="*_ds" 			type="double" 			indexed="true"  stored="true"  	multiValued="true"/>
-   <dynamicField name="*_coordinate"  	type="tdouble" 			indexed="true"  stored="false" />
-   <dynamicField name="*_dt"  			type="date"    			indexed="true"  stored="true"/>
-   <dynamicField name="*_dts" 			type="date"    			indexed="true"  stored="true" 	multiValued="true"/>
-   <dynamicField name="*_p"  			type="location" 		indexed="true" 	stored="true"/>
-   <dynamicField name="*_ti" 			type="tint"    			indexed="true"  stored="true"/>
-   <dynamicField name="*_tl" 			type="tlong"   			indexed="true"  stored="true"/>
-   <dynamicField name="*_tf" 			type="tfloat"  			indexed="true"  stored="true"/>
-   <dynamicField name="*_td" 			type="tdouble" 			indexed="true"  stored="true"/>
-   <dynamicField name="*_tdt" 			type="tdate"  			indexed="true"  stored="true"/>
-   <dynamicField name="*_c"   			type="currency" 		indexed="true"  stored="true"/>
-   <dynamicField name="attr_*" 			type="text_general" 	indexed="true" 	stored="true" 	multiValued="true"/>
-   <dynamicField name="ignored_*" 		type="ignored" 											multiValued="true"/>
-   <dynamicField name="random_*" 		type="random" />
-   <dynamicField name="*_tdt" 			type="tdate"  			indexed="true"  stored="true"/>
-   <dynamicField name="*_pi"  			type="pint"    			indexed="true"  stored="true"/>
-   <dynamicField name="*_c"   			type="currency" 		indexed="true"  stored="true"/>
-   <dynamicField name="ignored_*" 		type="ignored" 											multiValued="true"/>
-   <dynamicField name="attr_*" 			type="text_general" 	indexed="true" 	stored="true" 	multiValued="true"/>
-   <dynamicField name="random_*" 		type="random" />
+   <field name="normal_white_black" type="int" indexed="true" stored="false" required="true" /> 
+   <field name="normal_countries" type="string" indexed="true" stored="true" required="false" multiValued="true"/> 
+   <field name="vip_white_black" type="int" indexed="true" stored="false" required="true" /> 
+   <field name="vip_countries" type="string" indexed="true" stored="true" required="false" multiValued="true"/> 
 
+   <field name="product_total_weight" type="double" indexed="true" stored="true" required="true" /> 
+   <field name="product_total_weight_global" type="double" indexed="true" stored="true" required="false" /> 
+   <field name="product_total_weight_na" type="double" indexed="true" stored="true" required="false" /> 
+   <field name="product_total_weight_sa" type="double" indexed="true" stored="true" required="false" /> 
+   <field name="product_total_weight_euw" type="double" indexed="true" stored="true" required="false" /> 
+   <field name="product_total_weight_eue" type="double" indexed="true" stored="true" required="false" /> 
+   <field name="product_total_weight_other" type="double" indexed="true" stored="true" required="false" /> 
+   <field name="recommend_weight" type="double" indexed="true" stored="true" required="true" /> 
+   <field name="new_weight" type="double" indexed="true" stored="true" required="true" /> 
+   <field name="special_weight" type="double" indexed="true" stored="true" required="true" /> 
+   <field name="featured_weight" type="double" indexed="true" stored="true" required="true" /> 
+   <field name="average_rating" type="double" indexed="true" stored="true" required="true" /> 
+   <field name="product_price" type="double" indexed="true" stored="true" required="true" /> 
+
+   <!--   <field name="is_special" type="int" indexed="true" stored="true" required="true" /> -->
+   <field name="special_start" type="tlong" indexed="true" stored="true" required="true" /> 
+   <field name="special_end" type="tlong" indexed="true" stored="true" required="true" /> 
+   <field name="is_recommend" type="int" indexed="true" stored="true" required="true" /> 
+   <field name="is_featured" type="int" indexed="true" stored="true" required="true" /> 
+   <!--   <field name="is_ship_cost" type="int" indexed="true" stored="true" required="true" /> -->
+   <!--   <field name="is_new" type="int" indexed="true" stored="true" required="true" /> -->
+   <!--   <field name="is_attribute" type="int" indexed="true" stored="true" required="true" /> -->
+
+   <!--<field name="product_price_interger" type="int" indexed="true" stored="true" required="true" /> -->
+   <field name="product_status" type="int" indexed="true" stored="true" required="true" /> 
+   <field name="big_customer_only" type="int" indexed="true" stored="true" required="true" /> 
+   <field name="product_quantity" type="int" indexed="true" stored="true" required="true" /> 
+   <field name="add_date" type="tlong" indexed="true" stored="true" required="true" /> 
+   <field name="master_category_id" type="string" indexed="true" stored="true" required="true" /> 
+   <field name="master_category_keywords" type="text_en_splitting" indexed="true" stored="true" required="false" />
+   <field name="pm_id" type="text_en_splitting_little" indexed="true" stored="true" required="true" /> 
+   <field name="manufacturer" type="text_en_splitting_little" indexed="true" stored="true" required="true" /> 
+   <field name="manufacturer_keywords" type="text_en_splitting_little" indexed="true" stored="true" required="true" />
+   <field name="master_category_name_path_en" type="text_en_splitting" indexed="true" stored="true" required="true" />
+   <field name="master_category_name_path_pt" type="text_en_splitting" indexed="true" stored="true" required="true" />
+   <field name="master_category_name_path_ru" type="text_en_splitting" indexed="true" stored="true" required="true" />
+   <field name="master_category_name_path_es" type="text_en_splitting" indexed="true" stored="true" required="true" />
+   <field name="master_category_name_path_de" type="text_en_splitting" indexed="true" stored="true" required="true" />
+   <field name="master_category_name_path_fr" type="text_en_splitting" indexed="true" stored="true" required="true" />
+   <field name="master_category_name_path_it" type="text_en_splitting" indexed="true" stored="true" required="true" />
+   <field name="master_category_name_path_ar" type="text_en_splitting" indexed="true" stored="true" required="true" />
+   <field name="master_category_name_path_nl" type="text_en_splitting" indexed="true" stored="true" required="true" />
+   <field name="product_model" type="text_en_splitting_tight" indexed="true" stored="true" required="true" omitNorms="false" /> 
+
+   <field name="short_title_en" type="text_en_splitting" indexed="true" stored="true" required="true" omitNorms="false" />
+   <field name="short_title_pt" type="text_en_splitting" indexed="true" stored="true" required="true" omitNorms="false" />
+   <field name="short_title_ru" type="text_en_splitting" indexed="true" stored="true" required="true" omitNorms="false" />
+   <field name="short_title_es" type="text_en_splitting" indexed="true" stored="true" required="true" omitNorms="false" />
+   <field name="short_title_de" type="text_en_splitting" indexed="true" stored="true" required="true" omitNorms="false" />
+   <field name="short_title_fr" type="text_en_splitting" indexed="true" stored="true" required="true" omitNorms="false" />
+   <field name="short_title_it" type="text_en_splitting" indexed="true" stored="true" required="true" omitNorms="false" />
+   <field name="short_title_ar" type="text_en_splitting" indexed="true" stored="true" required="true" omitNorms="false" />
+   <field name="short_title_nl" type="text_en_splitting" indexed="true" stored="true" required="true" omitNorms="false" />
+   
+   <field name="category_path_name_en" type="text_en_splitting" indexed="true" stored="true" required="true" omitNorms="false" /> 
+   <field name="category_path_name_pt" type="text_en_splitting" indexed="true" stored="true" required="true" omitNorms="false" /> 
+   <field name="category_path_name_ru" type="text_en_splitting" indexed="true" stored="true" required="true" omitNorms="false" /> 
+   <field name="category_path_name_es" type="text_en_splitting" indexed="true" stored="true" required="true" omitNorms="false" /> 
+   <field name="category_path_name_de" type="text_en_splitting" indexed="true" stored="true" required="true" omitNorms="false" /> 
+   <field name="category_path_name_fr" type="text_en_splitting" indexed="true" stored="true" required="true" omitNorms="false" /> 
+   <field name="category_path_name_it" type="text_en_splitting" indexed="true" stored="true" required="true" omitNorms="false" /> 
+   <field name="category_path_name_ar" type="text_en_splitting" indexed="true" stored="true" required="true" omitNorms="false" /> 
+   <field name="category_path_name_nl" type="text_en_splitting" indexed="true" stored="true" required="true" omitNorms="false" /> 
+   
+   <field name="product_title_en" type="text_en_splitting" indexed="true" stored="true" required="true" omitNorms="false" />
+   <field name="product_title_pt" type="text_en_splitting" indexed="true" stored="true" required="true" omitNorms="false" />
+   <field name="product_title_ru" type="text_en_splitting" indexed="true" stored="true" required="true" omitNorms="false" />
+   <field name="product_title_es" type="text_en_splitting" indexed="true" stored="true" required="true" omitNorms="false" />
+   <field name="product_title_de" type="text_en_splitting" indexed="true" stored="true" required="true" omitNorms="false" />
+   <field name="product_title_fr" type="text_en_splitting" indexed="true" stored="true" required="true" omitNorms="false" />
+   <field name="product_title_it" type="text_en_splitting" indexed="true" stored="true" required="true" omitNorms="false" />
+   <field name="product_title_ar" type="text_en_splitting" indexed="true" stored="true" required="true" omitNorms="false" />
+   <field name="product_title_nl" type="text_en_splitting" indexed="true" stored="true" required="true" omitNorms="false" />
+   
+   <field name="tags" type="string" indexed="true" stored="true" required="false" multiValued="true" /> 
+
+   <!--   <field name="product_keywords" type="text_general" indexed="true" stored="true" required="false" /> -->
+   <field name="product_keywords_en" type="text_en_splitting" indexed="true" stored="true" required="true" omitNorms="false" />
+   <field name="product_keywords_pt" type="text_en_splitting" indexed="true" stored="true" required="true" omitNorms="false" />
+   <field name="product_keywords_ru" type="text_en_splitting" indexed="true" stored="true" required="true" omitNorms="false" />
+   <field name="product_keywords_es" type="text_en_splitting" indexed="true" stored="true" required="true" omitNorms="false" />
+   <field name="product_keywords_de" type="text_en_splitting" indexed="true" stored="true" required="true" omitNorms="false" />
+   <field name="product_keywords_fr" type="text_en_splitting" indexed="true" stored="true" required="true" omitNorms="false" />
+   <field name="product_keywords_it" type="text_en_splitting" indexed="true" stored="true" required="true" omitNorms="false" />
+   <field name="product_keywords_ar" type="text_en_splitting" indexed="true" stored="true" required="true" omitNorms="false" />
+   <field name="product_keywords_nl" type="text_en_splitting" indexed="true" stored="true" required="true" omitNorms="false" />
+
+   <field name="description_en" type="text_en" indexed="true" stored="false" required="true" omitNorms="false" />
+   <field name="description_pt" type="text_pt" indexed="true" stored="false" required="true" omitNorms="false" />
+   <field name="description_ru" type="text_ru" indexed="true" stored="false" required="true" omitNorms="false" />
+   <field name="description_es" type="text_es" indexed="true" stored="false" required="true" omitNorms="false" />
+   <field name="description_de" type="text_de" indexed="true" stored="false" required="true" omitNorms="false" />
+   <field name="description_fr" type="text_fr" indexed="true" stored="false" required="true" omitNorms="false" />
+   <field name="description_it" type="text_it" indexed="true" stored="false" required="true" omitNorms="false" />
+   <field name="description_ar" type="text_ar" indexed="true" stored="false" required="true" omitNorms="false" />
+   <field name="description_nl" type="text_nl" indexed="true" stored="false" required="true" omitNorms="false" />
+   
+   <field name="category_path" type="string" indexed="true" stored="true" required="false" multiValued="true" /> 
+   
+   <field name="text" type="text_general" indexed="true" stored="false" />
+
+   <dynamicField name="*_i"  type="int"    indexed="true"  stored="true"/>
+   <dynamicField name="*_is" type="int"    indexed="true"  stored="true"  multiValued="true"/>
+   <dynamicField name="*_s"  type="string"  indexed="true"  stored="true" />
+   <dynamicField name="*_ss" type="string"  indexed="true"  stored="true" multiValued="true"/>
+   <dynamicField name="*_l"  type="long"   indexed="true"  stored="true"/>
+   <dynamicField name="*_ls" type="long"   indexed="true"  stored="true"  multiValued="true"/>
+   <dynamicField name="*_t"  type="text_general"    indexed="true"  stored="true"/>
+   <dynamicField name="*_txt" type="text_general"   indexed="true"  stored="true" multiValued="true"/>
+   <dynamicField name="*_en"  type="text_en"    indexed="true"  stored="true" multiValued="true"/>
+   <dynamicField name="*_b"  type="boolean" indexed="true" stored="true"/>
+   <dynamicField name="*_bs" type="boolean" indexed="true" stored="true"  multiValued="true"/>
+   <dynamicField name="*_f"  type="float"  indexed="true"  stored="true"/>
+   <dynamicField name="*_fs" type="float"  indexed="true"  stored="true"  multiValued="true"/>
+   <dynamicField name="*_d"  type="double" indexed="true"  stored="true"/>
+   <dynamicField name="*_ds" type="double" indexed="true"  stored="true"  multiValued="true"/>
+
+   <!-- Type used to index the lat and lon components for the "location" FieldType -->
+   <dynamicField name="*_coordinate"  type="tdouble" indexed="true"  stored="false" />
+
+   <dynamicField name="*_dt"  type="date"    indexed="true"  stored="true"/>
+   <dynamicField name="*_dts" type="date"    indexed="true"  stored="true" multiValued="true"/>
+   <dynamicField name="*_p"  type="location" indexed="true" stored="true"/>
+
+   <!-- some trie-coded dynamic fields for faster range queries -->
+   <dynamicField name="*_ti" type="tint"    indexed="true"  stored="true"/>
+   <dynamicField name="*_tl" type="tlong"   indexed="true"  stored="true"/>
+   <dynamicField name="*_tf" type="tfloat"  indexed="true"  stored="true"/>
+   <dynamicField name="*_td" type="tdouble" indexed="true"  stored="true"/>
+   <dynamicField name="*_tdt" type="tdate"  indexed="true"  stored="true"/>
+
+   <dynamicField name="*_pi"  type="pint"    indexed="true"  stored="true"/>
+   <dynamicField name="*_c"   type="currency" indexed="true"  stored="true"/>
+
+   <dynamicField name="ignored_*" type="ignored" multiValued="true"/>
+   <dynamicField name="attr_*" type="text_general" indexed="true" stored="true" multiValued="true"/>
+
+   <dynamicField name="random_*" type="random" />
 
    <!-- uncomment the following to ignore any fields that don't already match an existing 
         field name or dynamic field, rather than reporting them as an error. 
@@ -246,7 +272,7 @@
         unknown fields indexed and/or stored by default --> 
    <!--dynamicField name="*" type="ignored" multiValued="true" /-->
    
-
+ </fields>
 
 
  <!-- Field to use to determine and enforce document uniqueness. 
@@ -269,13 +295,26 @@
   globally here.  The "q.op" request parameter takes precedence over this.
  <solrQueryParser defaultOperator="OR"/> -->
 
+  <!-- copyField commands copy one field to another at the time a document
+        is added to the index.  It's used either to index the same field differently,
+        or to add multiple fields to the same field for easier/faster searching.  -->
+
+  <!-- <copyField source="product_keywords_*" dest="product_keywords"/>-->
+
+   <!-- Create a string version of author for faceting -->
+<!--   <copyField source="author" dest="author_s"/> -->
+	
    <!-- Above, multiple source fields are copied to the [text] field. 
 	  Another way to map multiple source fields to the same 
 	  destination field is to use the dynamic field syntax. 
 	  copyField also supports a maxChars to copy setting.  -->
 	   
+   <!-- <copyField source="*_t" dest="text" maxChars="3000"/> -->
+
+   <!-- copy name to alphaNameSort, a field designed for sorting by name -->
+   <!-- <copyField source="name" dest="alphaNameSort"/> -->
  
-  
+  <types>
     <!-- field type definitions. The "name" attribute is
        just a label to be used by field definitions.  The "class"
        attribute and any other attributes determine the real
@@ -353,7 +392,7 @@
                   ... 6 months and 3 days in the future from the start of
                       the current day
                       
-         Consult the TrieDateField javadocs for more information.
+         Consult the DateField javadocs for more information.
 
          Note: For faster range queries, consider the tdate type
       -->
@@ -364,7 +403,22 @@
 
 
     <!--Binary data type. The data should be sent/retrieved in as Base64 encoded Strings -->
-    <fieldType name="binary" class="solr.BinaryField"/>
+    <fieldtype name="binary" class="solr.BinaryField"/>
+
+    <!--
+      Note:
+      These should only be used for compatibility with existing indexes (created with lucene or older Solr versions).
+      Use Trie based fields instead. As of Solr 3.5 and 4.x, Trie based fields support sortMissingFirst/Last
+      
+      Plain numeric field types that store and index the text
+      value verbatim (and hence don't correctly support range queries, since the
+      lexicographic ordering isn't equal to the numeric ordering)
+    -->
+    <fieldType name="pint" class="solr.IntField"/>
+    <fieldType name="plong" class="solr.LongField"/>
+    <fieldType name="pfloat" class="solr.FloatField"/>
+    <fieldType name="pdouble" class="solr.DoubleField"/>
+    <fieldType name="pdate" class="solr.DateField" sortMissingLast="true"/>
 
     <!-- The "RandomSortField" is not used to store or search any
          data.  You can declare fields of this type it in your schema
@@ -406,15 +460,6 @@
       </analyzer>
     </fieldType>
 
-    <!-- A text type for English text where stopwords and synonyms are managed using the REST API -->
-    <fieldType name="managed_en" class="solr.TextField" positionIncrementGap="100">
-      <analyzer>
-        <tokenizer class="solr.StandardTokenizerFactory"/>
-        <filter class="solr.ManagedStopFilterFactory" managed="english" />
-        <filter class="solr.ManagedSynonymFilterFactory" managed="english" />
-      </analyzer>
-    </fieldType>
-
     <!-- A general text field that has reasonable, generic
          cross-language defaults: it tokenizes with StandardTokenizer,
 	 removes stop words from case-insensitive "stopwords.txt"
@@ -444,6 +489,7 @@
          also applies synonyms from synonyms.txt. -->
     <fieldType name="text_en" class="solr.TextField" positionIncrementGap="100">
       <analyzer type="index">
+        <charFilter class="solr.HTMLStripCharFilterFactory" />
         <tokenizer class="solr.StandardTokenizerFactory"/>
         <!-- in this example, we will only use synonyms at query time
         <filter class="solr.SynonymFilterFactory" synonyms="index_synonyms.txt" ignoreCase="true" expand="false"/>
@@ -460,11 +506,14 @@
 	<!-- Optionally you may want to use this less aggressive stemmer instead of PorterStemFilterFactory:
         <filter class="solr.EnglishMinimalStemFilterFactory"/>
 	-->
-        <filter class="solr.PorterStemFilterFactory"/>
+        <!--<filter class="solr.PorterStemFilterFactory"/>-->
+    <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" catenateAll="0" splitOnCaseChange="1"/>
+		<filter class="solr.SnowballPorterFilterFactory" language="English"/>
+        <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
       </analyzer>
       <analyzer type="query">
         <tokenizer class="solr.StandardTokenizerFactory"/>
-        <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true"/>
+        <filter class="solr.SynonymFilterFactory" synonyms="lang/synonyms_en.txt" ignoreCase="true" expand="true"/>
         <filter class="solr.StopFilterFactory"
                 ignoreCase="true"
                 words="lang/stopwords_en.txt"
@@ -475,7 +524,10 @@
 	<!-- Optionally you may want to use this less aggressive stemmer instead of PorterStemFilterFactory:
         <filter class="solr.EnglishMinimalStemFilterFactory"/>
 	-->
-        <filter class="solr.PorterStemFilterFactory"/>
+    <!-- <filter class="solr.PorterStemFilterFactory"/>-->
+        <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" catenateAll="1"          splitOnCaseChange="1"/>
+    	<filter class="solr.SnowballPorterFilterFactory" language="English"/>
+        <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
       </analyzer>
     </fieldType>
 
@@ -490,38 +542,50 @@
         -->
     <fieldType name="text_en_splitting" class="solr.TextField" positionIncrementGap="100" autoGeneratePhraseQueries="true">
       <analyzer type="index">
-        <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+        <tokenizer class="solr.ClassicTokenizerFactory"/>
         <!-- in this example, we will only use synonyms at query time
         <filter class="solr.SynonymFilterFactory" synonyms="index_synonyms.txt" ignoreCase="true" expand="false"/>
         -->
         <!-- Case insensitive stop word removal.
         -->
-        <filter class="solr.StopFilterFactory"
-                ignoreCase="true"
-                words="lang/stopwords_en.txt"
-                />
-        <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" catenateAll="0" splitOnCaseChange="1"/>
+        <filter class="solr.StopFilterFactory"  ignoreCase="true"  words="lang/stopwords_en.txt" />
+        <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" catenateAll="1" splitOnCaseChange="1" splitOnNumerics="0"/>
         <filter class="solr.LowerCaseFilterFactory"/>
         <filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt"/>
         <filter class="solr.PorterStemFilterFactory"/>
+        <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
       </analyzer>
       <analyzer type="query">
-        <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+           <tokenizer class="solr.ClassicTokenizerFactory"/>
+           <!-- <tokenizer class="solr.WhitespaceTokenizerFactory"/>-->
         <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true"/>
-        <filter class="solr.StopFilterFactory"
-                ignoreCase="true"
-                words="lang/stopwords_en.txt"
-                />
-        <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="0" catenateNumbers="0" catenateAll="0" splitOnCaseChange="1"/>
+        <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_en.txt" />
+        <filter class="solr.WordDelimiterFilterFactory" generateWordParts="0" generateNumberParts="0" catenateWords="0" catenateNumbers="0" catenateAll="1" splitOnCaseChange="1" preserveOriginal="1"/>
         <filter class="solr.LowerCaseFilterFactory"/>
         <filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt"/>
         <filter class="solr.PorterStemFilterFactory"/>
+        <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
       </analyzer>
     </fieldType>
 
     <!-- Less flexible matching, but less false matches.  Probably not ideal for product names,
          but may be good for SKUs.  Can insert dashes in the wrong place and still match. -->
     <fieldType name="text_en_splitting_tight" class="solr.TextField" positionIncrementGap="100" autoGeneratePhraseQueries="true">
+      <analyzer>
+        <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+        <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="false"/>
+        <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_en.txt"/>
+        <filter class="solr.WordDelimiterFilterFactory" generateWordParts="0" generateNumberParts="0" catenateWords="1" catenateNumbers="1" catenateAll="0"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt"/>
+        <filter class="solr.EnglishMinimalStemFilterFactory"/>
+        <!-- this filter can remove any duplicate tokens that appear at the same position - sometimes
+             possible with WordDelimiterFilter in conjuncton with stemming. -->
+        <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+      </analyzer>
+    </fieldType>
+
+    <fieldType name="text_en_splitting_little" class="solr.TextField">
       <analyzer>
         <tokenizer class="solr.WhitespaceTokenizerFactory"/>
         <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="false"/>
@@ -589,7 +653,7 @@
              See the Java Regular Expression documentation for more
              information on pattern and replacement string syntax.
              
-             http://docs.oracle.com/javase/7/docs/api/java/util/regex/package-summary.html
+             http://java.sun.com/j2se/1.6.0/docs/api/java/util/regex/package-summary.html
           -->
         <filter class="solr.PatternReplaceFilterFactory"
                 pattern="([^a-z])" replacement="" replace="all"
@@ -597,14 +661,14 @@
       </analyzer>
     </fieldType>
     
-    <fieldType name="phonetic" stored="false" indexed="true" class="solr.TextField" >
+    <fieldtype name="phonetic" stored="false" indexed="true" class="solr.TextField" >
       <analyzer>
         <tokenizer class="solr.StandardTokenizerFactory"/>
         <filter class="solr.DoubleMetaphoneFilterFactory" inject="false"/>
       </analyzer>
-    </fieldType>
+    </fieldtype>
 
-    <fieldType name="payloads" stored="false" indexed="true" class="solr.TextField" >
+    <fieldtype name="payloads" stored="false" indexed="true" class="solr.TextField" >
       <analyzer>
         <tokenizer class="solr.WhitespaceTokenizerFactory"/>
         <!--
@@ -620,7 +684,7 @@
          -->
         <filter class="solr.DelimitedPayloadTokenFilterFactory" encoder="float"/>
       </analyzer>
-    </fieldType>
+    </fieldtype>
 
     <!-- lowercases the entire field value, keeping it as a single token.  -->
     <fieldType name="lowercase" class="solr.TextField" positionIncrementGap="100">
@@ -657,7 +721,7 @@
 
     <!-- since fields of this type are by default not stored or indexed,
          any data added to them will be ignored outright.  --> 
-    <fieldType name="ignored" stored="false" indexed="false" multiValued="true" class="solr.StrField" />
+    <fieldtype name="ignored" stored="false" indexed="false" multiValued="true" class="solr.StrField" />
 
     <!-- This point type indexes the coordinates as separate fields (subFields)
       If subFieldType is defined, it references a type, and a dynamic field
@@ -680,14 +744,7 @@
       http://wiki.apache.org/solr/SolrAdaptersForLuceneSpatial4
     -->
     <fieldType name="location_rpt" class="solr.SpatialRecursivePrefixTreeFieldType"
-        geo="true" distErrPct="0.025" maxDistErr="0.001" distanceUnits="kilometers" />
-
-    <!-- Spatial rectangle (bounding box) field. It supports most spatial predicates, and has
-     special relevancy modes: score=overlapRatio|area|area2D (local-param to the query).  DocValues is recommended for
-     relevancy. -->
-    <fieldType name="bbox" class="solr.BBoxField"
-               geo="true" distanceUnits="kilometers" numberType="_bbox_coord" />
-    <fieldType name="_bbox_coord" class="solr.TrieDoubleField" precisionStep="8" docValues="true" stored="false"/>
+        geo="true" distErrPct="0.025" maxDistErr="0.000009" units="degrees" />
 
    <!-- Money/currency field type. See http://wiki.apache.org/solr/MoneyFieldType
         Parameters:
@@ -709,10 +766,13 @@
     <!-- Arabic -->
     <fieldType name="text_ar" class="solr.TextField" positionIncrementGap="100">
       <analyzer> 
-        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <charFilter class="solr.HTMLStripCharFilterFactory" />
+        <!--tokenizer class="solr.StandardTokenizerFactory"/>-->
+        <tokenizer class="solr.ClassicTokenizerFactory"/>
         <!-- for any non-arabic -->
         <filter class="solr.LowerCaseFilterFactory"/>
         <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_ar.txt" />
+        <filter class="solr.SynonymFilterFactory" synonyms="lang/synonyms_ar.txt" ignoreCase="true" expand="true"/>
         <!-- normalizes ﻯ to ﻱ, etc -->
         <filter class="solr.ArabicNormalizationFilterFactory"/>
         <filter class="solr.ArabicStemFilterFactory"/>
@@ -725,6 +785,7 @@
         <tokenizer class="solr.StandardTokenizerFactory"/> 
         <filter class="solr.LowerCaseFilterFactory"/>
         <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_bg.txt" /> 
+        <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" catenateAll="1"          splitOnCaseChange="1"/>
         <filter class="solr.BulgarianStemFilterFactory"/>       
       </analyzer>
     </fieldType>
@@ -788,11 +849,16 @@
     <!-- German -->
     <fieldType name="text_de" class="solr.TextField" positionIncrementGap="100">
       <analyzer> 
-        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <charFilter class="solr.HTMLStripCharFilterFactory" />
+        <!--<tokenizer class="solr.StandardTokenizerFactory"/>-->
+        <tokenizer class="solr.ClassicTokenizerFactory"/>
         <filter class="solr.LowerCaseFilterFactory"/>
         <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_de.txt" format="snowball" />
+        <filter class="solr.SynonymFilterFactory" synonyms="lang/synonyms_de.txt" ignoreCase="true" expand="true"/>
         <filter class="solr.GermanNormalizationFilterFactory"/>
-        <filter class="solr.GermanLightStemFilterFactory"/>
+        <!--filter class="solr.GermanLightStemFilterFactory"/>-->
+        <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" catenateAll="1"          splitOnCaseChange="1"/>
+		 <filter class="solr.SnowballPorterFilterFactory" language="German2"/>
         <!-- less aggressive: <filter class="solr.GermanMinimalStemFilterFactory"/> -->
         <!-- more aggressive: <filter class="solr.SnowballPorterFilterFactory" language="German2"/> -->
       </analyzer>
@@ -812,10 +878,14 @@
     <!-- Spanish -->
     <fieldType name="text_es" class="solr.TextField" positionIncrementGap="100">
       <analyzer> 
-        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <charFilter class="solr.HTMLStripCharFilterFactory"/>
+        <!--<tokenizer class="solr.StandardTokenizerFactory"/>-->
+        <tokenizer class="solr.ClassicTokenizerFactory"/>
         <filter class="solr.LowerCaseFilterFactory"/>
         <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_es.txt" format="snowball" />
-        <filter class="solr.SpanishLightStemFilterFactory"/>
+        <filter class="solr.SynonymFilterFactory" synonyms="lang/synonyms_es.txt" ignoreCase="true" expand="true"/>
+        <!-- <filter class="solr.SpanishLightStemFilterFactory"/>-->
+		<filter class="solr.SnowballPorterFilterFactory" language="Spanish"/>
         <!-- more aggressive: <filter class="solr.SnowballPorterFilterFactory" language="Spanish"/> -->
       </analyzer>
     </fieldType>
@@ -826,6 +896,7 @@
         <tokenizer class="solr.StandardTokenizerFactory"/>
         <filter class="solr.LowerCaseFilterFactory"/>
         <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_eu.txt" />
+        <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" catenateAll="1"          splitOnCaseChange="1"/>
         <filter class="solr.SnowballPorterFilterFactory" language="Basque"/>
       </analyzer>
     </fieldType>
@@ -857,12 +928,17 @@
     <!-- French -->
     <fieldType name="text_fr" class="solr.TextField" positionIncrementGap="100">
       <analyzer> 
-        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <charFilter class="solr.HTMLStripCharFilterFactory" />
+        <!--<tokenizer class="solr.StandardTokenizerFactory"/>-->
+        <tokenizer class="solr.ClassicTokenizerFactory"/>
         <!-- removes l', etc -->
         <filter class="solr.ElisionFilterFactory" ignoreCase="true" articles="lang/contractions_fr.txt"/>
         <filter class="solr.LowerCaseFilterFactory"/>
         <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_fr.txt" format="snowball" />
-        <filter class="solr.FrenchLightStemFilterFactory"/>
+        <filter class="solr.SynonymFilterFactory" synonyms="lang/synonyms_fr.txt" ignoreCase="true" expand="true"/>
+        <!--<filter class="solr.FrenchLightStemFilterFactory"/> -->
+        <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" catenateAll="1"          splitOnCaseChange="1"/>
+		<filter class="solr.SnowballPorterFilterFactory" language="French"/>
         <!-- less aggressive: <filter class="solr.FrenchMinimalStemFilterFactory"/> -->
         <!-- more aggressive: <filter class="solr.SnowballPorterFilterFactory" language="French"/> -->
       </analyzer>
@@ -875,7 +951,6 @@
         <!-- removes d', etc -->
         <filter class="solr.ElisionFilterFactory" ignoreCase="true" articles="lang/contractions_ga.txt"/>
         <!-- removes n-, etc. position increments is intentionally false! -->
-        <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/hyphenations_ga.txt"/>
         <filter class="solr.IrishLowerCaseFilterFactory"/>
         <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_ga.txt"/>
         <filter class="solr.SnowballPorterFilterFactory" language="Irish"/>
@@ -942,12 +1017,17 @@
     <!-- Italian -->
     <fieldType name="text_it" class="solr.TextField" positionIncrementGap="100">
       <analyzer> 
-        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <charFilter class="solr.HTMLStripCharFilterFactory" />
+        <!--<tokenizer class="solr.StandardTokenizerFactory"/>-->
+        <tokenizer class="solr.ClassicTokenizerFactory"/>
         <!-- removes l', etc -->
         <filter class="solr.ElisionFilterFactory" ignoreCase="true" articles="lang/contractions_it.txt"/>
         <filter class="solr.LowerCaseFilterFactory"/>
         <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_it.txt" format="snowball" />
-        <filter class="solr.ItalianLightStemFilterFactory"/>
+        <filter class="solr.SynonymFilterFactory" synonyms="lang/synonyms_it.txt" ignoreCase="true" expand="true"/>
+        <!--<filter class="solr.ItalianLightStemFilterFactory"/>-->
+        <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" catenateAll="1"          splitOnCaseChange="1"/>
+		<filter class="solr.SnowballPorterFilterFactory" language="Italian"/>
         <!-- more aggressive: <filter class="solr.SnowballPorterFilterFactory" language="Italian"/> -->
       </analyzer>
     </fieldType>
@@ -1018,7 +1098,8 @@
     <!-- Dutch -->
     <fieldType name="text_nl" class="solr.TextField" positionIncrementGap="100">
       <analyzer> 
-        <tokenizer class="solr.StandardTokenizerFactory"/>
+          <!--<tokenizer class="solr.StandardTokenizerFactory"/>-->
+        <tokenizer class="solr.ClassicTokenizerFactory"/>
         <filter class="solr.LowerCaseFilterFactory"/>
         <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_nl.txt" format="snowball" />
         <filter class="solr.StemmerOverrideFilterFactory" dictionary="lang/stemdict_nl.txt" ignoreCase="false"/>
@@ -1042,10 +1123,14 @@
     <!-- Portuguese -->
     <fieldType name="text_pt" class="solr.TextField" positionIncrementGap="100">
       <analyzer> 
-        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <charFilter class="solr.HTMLStripCharFilterFactory" />
+        <!--<tokenizer class="solr.StandardTokenizerFactory"/>-->
+        <tokenizer class="solr.ClassicTokenizerFactory"/>
         <filter class="solr.LowerCaseFilterFactory"/>
         <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_pt.txt" format="snowball" />
-        <filter class="solr.PortugueseLightStemFilterFactory"/>
+        <filter class="solr.SynonymFilterFactory" synonyms="lang/synonyms_br.txt" ignoreCase="true" expand="true"/>
+        <!--<filter class="solr.PortugueseLightStemFilterFactory"/>-->
+		<filter class="solr.BrazilianStemFilterFactory"/>
         <!-- less aggressive: <filter class="solr.PortugueseMinimalStemFilterFactory"/> -->
         <!-- more aggressive: <filter class="solr.SnowballPorterFilterFactory" language="Portuguese"/> -->
         <!-- most aggressive: <filter class="solr.PortugueseStemFilterFactory"/> -->
@@ -1058,6 +1143,7 @@
         <tokenizer class="solr.StandardTokenizerFactory"/>
         <filter class="solr.LowerCaseFilterFactory"/>
         <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_ro.txt" />
+        <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" catenateAll="1"          splitOnCaseChange="1"/>
         <filter class="solr.SnowballPorterFilterFactory" language="Romanian"/>
       </analyzer>
     </fieldType>
@@ -1065,9 +1151,12 @@
     <!-- Russian -->
     <fieldType name="text_ru" class="solr.TextField" positionIncrementGap="100">
       <analyzer> 
-        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <charFilter class="solr.HTMLStripCharFilterFactory" />
+        <!--<tokenizer class="solr.StandardTokenizerFactory"/>-->
+        <tokenizer class="solr.ClassicTokenizerFactory"/>
         <filter class="solr.LowerCaseFilterFactory"/>
         <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_ru.txt" format="snowball" />
+        <filter class="solr.SynonymFilterFactory" synonyms="lang/synonyms_ru.txt" ignoreCase="true" expand="true"/>
         <filter class="solr.SnowballPorterFilterFactory" language="Russian"/>
         <!-- less aggressive: <filter class="solr.RussianLightStemFilterFactory"/> -->
       </analyzer>
@@ -1079,6 +1168,7 @@
         <tokenizer class="solr.StandardTokenizerFactory"/>
         <filter class="solr.LowerCaseFilterFactory"/>
         <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_sv.txt" format="snowball" />
+        <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" catenateAll="1"          splitOnCaseChange="1"/>
         <filter class="solr.SnowballPorterFilterFactory" language="Swedish"/>
         <!-- less aggressive: <filter class="solr.SwedishLightStemFilterFactory"/> -->
       </analyzer>
@@ -1087,8 +1177,9 @@
     <!-- Thai -->
     <fieldType name="text_th" class="solr.TextField" positionIncrementGap="100">
       <analyzer> 
-        <tokenizer class="solr.ThaiTokenizerFactory"/>
+        <tokenizer class="solr.StandardTokenizerFactory"/>
         <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.ThaiWordFilterFactory"/>
         <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords_th.txt" />
       </analyzer>
     </fieldType>
@@ -1097,12 +1188,13 @@
     <fieldType name="text_tr" class="solr.TextField" positionIncrementGap="100">
       <analyzer> 
         <tokenizer class="solr.StandardTokenizerFactory"/>
-        <filter class="solr.ApostropheFilterFactory"/>
         <filter class="solr.TurkishLowerCaseFilterFactory"/>
         <filter class="solr.StopFilterFactory" ignoreCase="false" words="lang/stopwords_tr.txt" />
         <filter class="solr.SnowballPorterFilterFactory" language="Turkish"/>
       </analyzer>
     </fieldType>
+
+ </types>
   
   <!-- Similarity is the scoring routine for each document vs. a query.
        A custom Similarity or SimilarityFactory may be specified here, but 
