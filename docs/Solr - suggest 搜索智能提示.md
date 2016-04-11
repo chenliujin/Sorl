@@ -18,18 +18,18 @@
 * field: 来源字段
 * suggest.dictionary 的值必须与 searchComponent 中 suggester 标签下 <str name=”name”>default</str> 配置对应，默认 default。
 * 返回结果排序
- * 用户搜索词语的频率排序?
+ * keyword 的搜索次数?
+ * 多语言
 ```
   <searchComponent name="suggest" class="solr.SuggestComponent">
     <lst name="suggester">
-      <str name="lookupImpl">FuzzyLookupFactory</str>      <!-- org.apache.solr.spelling.suggest.fst -->
-      <str name="dictionaryImpl">DocumentDictionaryFactory</str>     <!-- org.apache.solr.spelling.suggest.HighFrequencyDictionaryFactory -->
+      <str name="lookupImpl">FuzzyLookupFactory</str>
+      <str name="dictionaryImpl">DocumentDictionaryFactory</str>
       <str name="field">title</str>
       <str name="weightField">price</str>
       <str name="suggestAnalyzerFieldType">string</str>
     </lst>
   </searchComponent>
-
   <requestHandler name="/suggest" class="solr.SearchHandler" startup="lazy">
     <lst name="defaults">
       <str name="suggest">true</str>
@@ -48,3 +48,4 @@ http://www.chenliujin.com:8080/solr/suggest?q=ipho&wt=json&indent=true
 * [Configure Solr -Suggester](http://romiawasthy.blogspot.hk/2014/06/configure-solr-suggester.html)
 * [搜索引擎关键字智能提示的一种实现 - 美团](http://tech.meituan.com/pinyin-suggest.html)
 * [Solr的自动完成实现方式（第二部分：Suggester方式）](http://www.cnblogs.com/ibook360/archive/2011/11/30/2269077.html)
+* [Suggester](https://cwiki.apache.org/confluence/display/solr/Suggester)
