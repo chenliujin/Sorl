@@ -23,10 +23,11 @@
 ```
   <searchComponent name="suggest" class="solr.SuggestComponent">
     <lst name="suggester">
+      <str name="name">en</str>
       <str name="lookupImpl">FuzzyLookupFactory</str>
       <str name="dictionaryImpl">DocumentDictionaryFactory</str>
       <str name="field">title</str>
-      <str name="weightField">price</str>
+      <str name="weightField">title</str>
       <str name="suggestAnalyzerFieldType">string</str>
     </lst>
   </searchComponent>
@@ -40,12 +41,21 @@
     </arr>
   </requestHandler>
 ```
+### 构建索引
 
 ### 查询测试
-http://www.chenliujin.com:8080/solr/suggest?q=ipho&wt=json&indent=true
+http://127.0.0.1:8080/solr/suggest?q=ipho&wt=json&indent=true
+
+## Lookup Implementations
+### AnalyzingLookupFactory
+### FuzzyLookupFactory
+### AnalyzingInfixLookupFactory
+### BlendedInfixLookupFactory
+
 
 ## 参考文献
 * [Configure Solr -Suggester](http://romiawasthy.blogspot.hk/2014/06/configure-solr-suggester.html)
 * [搜索引擎关键字智能提示的一种实现 - 美团](http://tech.meituan.com/pinyin-suggest.html)
 * [Solr的自动完成实现方式（第二部分：Suggester方式）](http://www.cnblogs.com/ibook360/archive/2011/11/30/2269077.html)
 * [Suggester](https://cwiki.apache.org/confluence/display/solr/Suggester)
+* [solr的suggest模块](http://www.cnblogs.com/yjf512/p/5166382.html)
