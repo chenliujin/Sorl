@@ -62,3 +62,4 @@ http://127.0.0.1:8080/solr/suggest?q=ipho&wt=json&indent=true
 * [Solr的自动完成实现方式（第二部分：Suggester方式）](http://www.cnblogs.com/ibook360/archive/2011/11/30/2269077.html)
 * [Suggester](https://cwiki.apache.org/confluence/display/solr/Suggester)
 * [solr的suggest模块](http://www.cnblogs.com/yjf512/p/5166382.html)
+* [java——Impl Class AnalyzingInfixLookupFactory的Solr Suggester](http://www.koofun.com/showcode.html?id=25977)
