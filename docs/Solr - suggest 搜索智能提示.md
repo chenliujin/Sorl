@@ -52,6 +52,9 @@ http://127.0.0.1:8080/solr/suggest?q=ipho&wt=json&indent=true
 ### AnalyzingInfixLookupFactory
 ### BlendedInfixLookupFactory
 
+## Q & A
+* 多语言（中文）
+* 权重
 
 ## 参考文献
 * [Configure Solr -Suggester](http://romiawasthy.blogspot.hk/2014/06/configure-solr-suggester.html)
