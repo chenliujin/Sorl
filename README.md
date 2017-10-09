@@ -8,4 +8,5 @@
 
 
 # 教程
+- [ref-guide](https://www.apache.org/dyn/closer.lua/lucene/solr/ref-guide/)
 - https://lucene.apache.org/solr/guide/6_6/index.html
