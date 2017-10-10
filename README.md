@@ -2,6 +2,12 @@
 # 范围查询
 - price:[0 TO 100]
 
+### >= 0
+
+```
+price: [0 TO *]
+```
+
 
 # Client
 - [PhpSolrClient](https://github.com/roomthirteen/PhpSolrClient)
