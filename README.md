@@ -22,3 +22,7 @@ price: [0 TO *]
 
 
 - [Solr Releases](http://archive.apache.org/dist/lucene/solr/)
+
+
+# 增量更新
+- http://www.cnblogs.com/luxiaoxun/p/4442770.html
