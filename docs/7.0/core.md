@@ -21,6 +21,7 @@ docker exec -it --user=solr my_solr bin/solr create_core -c demo
 
 
 ## dataimport
+- mysql-connector-java-5.1.42-bin.jar
 
 ```
 $ vim solrconfig.xml
