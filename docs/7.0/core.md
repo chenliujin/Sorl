@@ -1,10 +1,13 @@
 # docker
 
-## 目录权限
+## 目录映射和目录权限
+- -v /opt/solr/server/solr_tmp/:/opt/solr/server/solr_tmp/
+- 在 solr docker 里面 cp -R /opt/solr/server/solr/* /opt/solr/server/solr_tmp/
+- mv /opt/solr/server/solr_tmp /opt/solr/server/solr
 
 ```
 $ docker exec -it --user=root solr bash
-$ chown -R solr:solr /opt/solr/server/solr/chenliujin 
+$ chown -R solr:solr /opt/solr/server/solr/
 ```
 
 ## 创建 core
