@@ -9,3 +9,4 @@
 
 # 参考文献
 - http://www.cnblogs.com/luxiaoxun/p/4442770.html
+- https://wiki.apache.org/solr/DataImportHandler
