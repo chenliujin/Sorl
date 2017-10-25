@@ -12,7 +12,7 @@ json.facet={
 '
 ```
 
-# 纬度
+# 维度 
 
 ## 日期
 - HOUR
@@ -31,8 +31,8 @@ gap: +1MONTH
 ```
 	type: range,
 	field: payment_time,
-	start: '',
-	end: '',
+	start: '2010-01-01T00:00:00Z',
+	end: '2017-01-01T23:59:59Z',
 	gap: "%2B1YEAR" //+1YEAR
 ```
 
