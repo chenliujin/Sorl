@@ -29,6 +29,10 @@ gap: +1MONTH
 ```
 - YEAR
 ```
-gap: +1YEAR
+	type: range,
+	field: payment_time,
+	start: '',
+	end: '',
+	gap: "%2B1YEAR" //+1YEAR
 ```
 
