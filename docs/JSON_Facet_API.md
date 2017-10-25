@@ -15,6 +15,10 @@ json.facet={
 # 纬度
 
 ## 日期
+- HOUR
+```
+gap: +1HOUR
+```
 - Daily
 ```
 gap: +1DAY
@@ -23,3 +27,8 @@ gap: +1DAY
 ```
 gap: +1MONTH
 ```
+- YEAR
+```
+gap: +1YEAR
+```
+
