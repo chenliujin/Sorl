@@ -11,3 +11,15 @@ json.facet={
 }
 '
 ```
+
+# 纬度
+
+## 日期
+- Daily
+```
+gap: +1DAY
+```
+- Monthly
+```
+gap: +1MONTH
+```
