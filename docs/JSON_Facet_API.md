@@ -33,6 +33,6 @@ gap: +1MONTH
 	field: payment_time,
 	start: '2010-01-01T00:00:00Z',
 	end: '2017-01-01T23:59:59Z',
-	gap: "%2B1YEAR" //+1YEAR
+	gap: "%2B1YEAR" //+1YEAR, Postman 用 %2B1YEAR，curl 用 +1YEAR
 ```
 
