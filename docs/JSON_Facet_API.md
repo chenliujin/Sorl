@@ -36,3 +36,5 @@ gap: +1MONTH
 	gap: "%2B1YEAR" //+1YEAR, Postman 用 %2B1YEAR，curl 用 +1YEAR
 ```
 
+# 参考文献
+- [JSON Facet API](http://yonik.com/json-facet-api/)
