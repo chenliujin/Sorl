@@ -19,6 +19,9 @@ docker exec -it --user=solr my_solr bin/solr create_core -c demo
 ## 字段定义
 - managed-schema
 
+### MySQL 字段类型映射 Solr 类型
+- TINYINT => string
+
 
 ## dataimport
 - mysql-connector-java-5.1.42-bin.jar
