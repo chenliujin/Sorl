@@ -20,7 +20,10 @@ docker exec -it --user=solr my_solr bin/solr create_core -c demo
 - managed-schema
 
 ### MySQL 字段类型映射 Solr 类型
-- TINYINT => string
+- TINYINT => pint
+```
+CONVERT(status, SIGNED) AS status
+```
 
 
 ## dataimport
