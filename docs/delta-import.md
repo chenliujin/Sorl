@@ -4,7 +4,7 @@
 # 计划任务
 
 ```
-* * * * * curl http://127.0.0.1:8983/solr/staffer_manual/dataimport?command=delta-import&clean=false&commit=true > /dev/null 2 > &1
+* * * * * nohup curl http://127.0.0.1:8983/solr/staffer_manual/dataimport?command=delta-import&clean=false&commit=true > /dev/null 2 > &1
 ```
 
 
