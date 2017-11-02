@@ -1,5 +1,13 @@
 
 
+# DIH 导入时 last_index_time 小于当前时间 8 小时
+
+```
+RUN sed -i "s@#SOLR_TIMEZONE=\"UTC\"@SOLR_TIMEZONE=\"Asia/Shanghai\"@" /opt/solr/bin/solr.in.sh
+
+docker restart solr
+```
+
 
 # 计划任务
 
