@@ -8,6 +8,9 @@ RUN sed -i "s@#SOLR_TIMEZONE=\"UTC\"@SOLR_TIMEZONE=\"Asia/Shanghai\"@" /opt/solr
 docker restart solr
 ```
 
+# Notice
+- 需要注意服务器时间差
+
 
 # 计划任务
 
